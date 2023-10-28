@@ -39,3 +39,7 @@ dependencies {
             // the following is optional if you want vision
             implementation 'org.ftclib.ftclib:vision:2.1.0'
 }
+
+dependencies {
+    implementation 'org.openftc:easyopencv:1.7.0'
+}
