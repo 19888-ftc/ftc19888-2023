@@ -10,15 +10,10 @@ public class TeleOp1 extends LinearOpMode{
     public void runOpMode(){
         RobotHardware map = new RobotHardware(hardwareMap);
         waitForStart();
-        double servo1position=0.0;
-        double servo2position=0.0;
-        double servospeed=0.01;
-        double servo3position=0.0;
-        double servo4position=0.0;
-        map.servo1.setPosition(0.0);
+        double servoposition=0.0;
+        double placement_angle=0.75;
         map.servo2.setPosition(0.0);
-        map.servo3.setPosition(0.0);
-        map.servo4.setPosition(0.0);
+        map.servo1.setPosition(0.0);
         while(opModeIsActive()){
             double max;
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -26,18 +21,14 @@ public class TeleOp1 extends LinearOpMode{
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
             double power1  =  0;
-            double motorpower=0.04;
+            double motorpower=0.8;
             if(gamepad1.dpad_up) power1=motorpower;
             double power2=0;
             if(gamepad1.dpad_down) power2=motorpower;
-            double power3  =  0;
-            if(gamepad1.y) power3=motorpower;
-            double power4  =  0;
-            if(gamepad1.a) power4=motorpower;
-            double power5  =  0;
-            if(gamepad1.x) power5=motorpower;
-            double power6  =  0;
-            if(gamepad1.b) power6=motorpower;
+            double power3=0;
+            if(gamepad1.left_bumper) power3=motorpower;
+            if(gamepad1.a)  servoposition=placement_angle;
+            if(gamepad1.b)  servoposition=0.0;
             map.servo1.setPosition(0.0);
             map.servo2.setPosition(0.0);
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -78,19 +69,12 @@ public class TeleOp1 extends LinearOpMode{
             map.leftBack.setPower(leftBackPower);
             map.rightBack.setPower(rightBackPower);
             map.slide1.setPower(power1-power2);
-            map.slide2.setPower(power3-power4);
+            map.slide2.setPower(power1-power2);
+            map.intake1.setPower(power3);
+            map.intake2.setPower(power3);
             //map.intake_.setPower(power5-power6);
-
-            if(gamepad1.x) servo1position+=servospeed;
-            if(gamepad1.b) servo2position-=servospeed;
-            if(gamepad1.left_bumper) servo1position+=servospeed;
-            if(gamepad1.right_bumper) servo2position-=servospeed;
-            if(gamepad1.left_bumper) {servo3position+=servospeed;servo4position-=servospeed;}
-            if(gamepad1.right_bumper) {servo3position-=servospeed;servo4position+=servospeed;}
-            map.servo1.setPosition(servo1position);
-            map.servo2.setPosition(servo2position);
-            map.servo3.setPosition(servo3position);
-            map.servo4.setPosition(servo4position);
+            map.servo1.setPosition(servoposition);
+            map.servo2.setPosition(servoposition);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Front left/Right", "%4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
