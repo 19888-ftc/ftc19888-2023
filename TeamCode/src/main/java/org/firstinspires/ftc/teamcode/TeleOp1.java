@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.lang.Math;
 @TeleOp
 public class TeleOp1 extends LinearOpMode{
     @Override
@@ -12,15 +13,17 @@ public class TeleOp1 extends LinearOpMode{
         waitForStart();
         double servoposition=0.0;
         double placement_angle=0.75;// the angle for the placement, servo
-        //map.servo2.setPosition(0.0);
-        //map.servo1.setPosition(0.0);
+        map.servo2.setPosition(0.0);
+        map.servo1.setPosition(0.0);
         //initialize servo position
         while(opModeIsActive()){
             double max;
+            boolean turn1=false;
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double yaw     =  -gamepad1.right_stick_x;
+            if(yaw!=0) turn1=true;
             double power1  =  0;//power1 is the positive power for the slide
             double motorpower=0.8;//motorpower is the default power for all the motors except the driving motors
             if(gamepad1.dpad_up) power1=motorpower;
@@ -28,7 +31,7 @@ public class TeleOp1 extends LinearOpMode{
             if(gamepad1.dpad_down) power2=motorpower;
             double power3=0;//power3 is the power for the intake
             if(gamepad1.left_bumper) power3=motorpower;
-            if(gamepad1.a)  servoposition=placement_angle;
+            if(gamepad1.a)  {servoposition=placement_angle;}
             if(gamepad1.b)  servoposition=0.0;
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -58,27 +61,40 @@ public class TeleOp1 extends LinearOpMode{
             //   2) Then make sure they run in the correct direction by modifying the
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
             // Send calculated power to wheels
-            /*map.leftFront.setPower(-leftFrontPower);
-            map.rightFront.setPower(rightFrontPower);
-            map.leftBack.setPower(leftBackPower);
-            map.rightBack.setPower(rightBackPower);
+            double lfpower=-leftFrontPower*0.9;
+            lfpower=Math.pow(lfpower,3);
+            if((lfpower<0.1) && (lfpower>-0.1)) lfpower=0;
+            double rfpower=-rightFrontPower*0.9;
+            rfpower=Math.pow(rfpower,3);
+            if((rfpower<0.1) && (rfpower>-0.1)) rfpower=0;
+            double lbpower=-leftBackPower*0.9;
+            lbpower=Math.pow(lbpower,3);
+            if((lbpower<0.1) && (lbpower>-0.1)) lbpower=0;
+            double rbpower=rightBackPower*0.9;
+            rbpower=Math.pow(rbpower,3);
+            if((rbpower<0.1) && (rbpower>-0.1)) rbpower=0;
+            if(turn1) {
+                lfpower=lfpower*0.6;
+                rfpower=rfpower*0.6;
+                lbpower=lbpower*0.6;
+                rbpower=rbpower*0.6;
+            }
+            map.leftFront.setPower(lfpower);
+            map.rightFront.setPower(rfpower);
+            map.leftBack.setPower(lbpower);
+            map.rightBack.setPower(rbpower);
             map.slide1.setPower(power1-power2);// the power on the positive side - power on the negative side = the power
-            map.slide2.setPower(power1-power2);*/
+            map.slide2.setPower(power1-power2);
             map.intake1.setPower(power3);
-            //map.intake2.setPower(power3);
-            //map.intake_.setPower(power5-power6);
             //set the power for all the powers
-            //map.servo1.setPosition(servoposition);
-            //map.servo2.setPosition(servoposition);
+            map.servo1.setPosition(servoposition);
+            map.servo2.setPosition(servoposition);
             //set position for the servo
             // Show the elapsed game time and wheel power.
             telemetry.addData("Front left/Right", "%4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("servo","%4.2f",servoposition);
             telemetry.update();
         }
     }
