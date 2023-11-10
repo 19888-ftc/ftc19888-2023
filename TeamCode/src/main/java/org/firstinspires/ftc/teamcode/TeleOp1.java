@@ -18,7 +18,7 @@ public class TeleOp1 extends LinearOpMode{
         //initialize servo position
         while(opModeIsActive()){
             double max;
-            boolean turn1=false;
+            boolean turn1=false;//whether it is turning
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
@@ -62,6 +62,9 @@ public class TeleOp1 extends LinearOpMode{
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
             // Send calculated power to wheels
+
+
+            //Don't change it. Exponential Growth of motor power
             double lfpower=-leftFrontPower*0.9;
             lfpower=Math.pow(lfpower,3);
             if((lfpower<0.1) && (lfpower>-0.1)) lfpower=0;
@@ -74,11 +77,12 @@ public class TeleOp1 extends LinearOpMode{
             double rbpower=rightBackPower*0.9;
             rbpower=Math.pow(rbpower,3);
             if((rbpower<0.1) && (rbpower>-0.1)) rbpower=0;
+
             if(turn1) {
-                lfpower=lfpower*0.6;
-                rfpower=rfpower*0.6;
-                lbpower=lbpower*0.6;
-                rbpower=rbpower*0.6;
+                lfpower = lfpower * 0.6;
+                rfpower = rfpower * 0.6;
+                lbpower = lbpower * 0.6;
+                rbpower = rbpower * 0.6;
             }
             map.leftFront.setPower(lfpower);
             map.rightFront.setPower(rfpower);
