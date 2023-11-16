@@ -48,7 +48,7 @@ public class RobotHardware {
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
         slide1.setDirection(DcMotorSimple.Direction.FORWARD);
-        slide2.setDirection(DcMotorSimple.Direction.FORWARD);
+        slide2.setDirection(DcMotorSimple.Direction.REVERSE);
         intake1.setDirection(DcMotorSimple.Direction.FORWARD);
         servo1.setDirection(Servo.Direction.FORWARD);
         servo2.setDirection(Servo.Direction.FORWARD);

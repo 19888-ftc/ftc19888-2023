@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +13,7 @@ public class TeleOp1 extends LinearOpMode{
         RobotHardware map = new RobotHardware(hardwareMap);
         waitForStart();
         double servoposition=0.0;
-        double placement_angle=0.75;// the angle for the placement, servo
+        double placement_angle=0.80;
         map.servo2.setPosition(0.0);
         map.servo1.setPosition(0.0);
         //initialize servo position
@@ -20,9 +21,15 @@ public class TeleOp1 extends LinearOpMode{
             double max;
             boolean turn1=false;//whether it is turning
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  -gamepad1.right_stick_x;
+            double lx1=gamepad1.left_stick_x;
+            double ly1=gamepad1.left_stick_y;
+            double rx1=gamepad1.right_stick_x;
+            if((lx1<=0.1) && (lx1>=-0.1)) lx1=0.0;
+            if((ly1<=0.1) && (ly1>=-0.1)) ly1=0.0;
+            if((rx1<=0.1) && (rx1>=-0.1)) rx1=0.0;
+            double axial   = -ly1;  // Note: pushing stick forward gives negative value
+            double lateral =  lx1;
+            double yaw     =  -rx1;
             if(yaw!=0) turn1=true;
             double power1  =  0;//power1 is the positive power for the slide
             double motorpower=0.8;//motorpower is the default power for all the motors except the driving motors
@@ -31,6 +38,8 @@ public class TeleOp1 extends LinearOpMode{
             if(gamepad1.dpad_down) power2=motorpower;
             double power3=0;//power3 is the power for the intake
             if(gamepad1.left_bumper) power3=motorpower;
+            double power4=0;
+            if(gamepad1.right_bumper) power4=motorpower;
             if(gamepad1.a)  {servoposition=placement_angle;}
             if(gamepad1.b)  servoposition=0.0;
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
@@ -90,7 +99,7 @@ public class TeleOp1 extends LinearOpMode{
             map.rightBack.setPower(rbpower);
             map.slide1.setPower(power1-power2);// the power on the positive side - power on the negative side = the power
             map.slide2.setPower(power1-power2);
-            map.intake1.setPower(power3);
+            map.intake1.setPower(power3-power4);
             //set the power for all the powers
             map.servo1.setPosition(servoposition);
             map.servo2.setPosition(servoposition);
