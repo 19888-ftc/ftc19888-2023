@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.lang.Math;
 @TeleOp
 public class TeleOp1 extends LinearOpMode{
+    double max;
     @Override
     public void runOpMode(){
         RobotHardware map = new RobotHardware(hardwareMap);
@@ -18,7 +19,7 @@ public class TeleOp1 extends LinearOpMode{
         map.servo1.setPosition(0.0);
         //initialize servo position
         while(opModeIsActive()){
-            double max;
+
             boolean turn1=false;//whether it is turning
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double lx1=gamepad1.left_stick_x;
@@ -30,24 +31,43 @@ public class TeleOp1 extends LinearOpMode{
             double axial   = -ly1;  // Note: pushing stick forward gives negative value
             double lateral =  lx1;
             double yaw     =  -rx1;
+
+
             if(yaw!=0) turn1=true;
-            double power1  =  0;//power1 is the positive power for the slide
+
+            /* SLIDE OPERATION CODE: */
             double motorpower=0.8;//motorpower is the default power for all the motors except the driving motors
+
+            double power1  =  0;//power1 is the positive power for the slide
             if(gamepad1.dpad_up) power1=motorpower;
+
             double power2=0;//power2 is the negative power for the slide
             if(gamepad1.dpad_down) power2=motorpower;
+
             double power3=0;//power3 is the power for the intake
             if(gamepad1.left_bumper) power3=motorpower;
+
             double power4=0;
             if(gamepad1.right_bumper) power4=motorpower;
+
+            /* PIXEL DUMPER CODE: */
             if(gamepad1.a)  {servoposition=placement_angle;}
             if(gamepad1.b)  servoposition=0.0;
+
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = axial + lateral + yaw;
+            if(leftFrontPower != 0 && leftFrontPower < 0.3) leftFrontPower += 0.3;
+
             double rightFrontPower = axial - lateral - yaw;
+            if(rightFrontPower != 0 && rightFrontPower < 0.3) rightFrontPower += 0.3;
+
             double leftBackPower   = axial - lateral + yaw;
+            if(leftBackPower != 0 && leftBackPower < 0.3) leftBackPower += 0.3;
+
             double rightBackPower  = axial + lateral - yaw;
+            if(rightBackPower != 0 && rightBackPower < 0.3) rightBackPower += 0.3;
+
             double Power=axial+lateral+yaw;//driving template no need to change
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
